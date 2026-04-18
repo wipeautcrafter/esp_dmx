@@ -1,53 +1,57 @@
 # esp_dmx
 
+> [!WARNING] This is a patched version of the project with support for esp-idf 5.4+
+
 This library allows for transmitting and receiving ANSI-ESTA E1.11 DMX-512A and ANSI-ESTA E1.20 RDM using an Espressif ESP32. It provides control and analysis of the packet configuration and allows the user to read or write synchronously or asynchronously from the DMX bus using whichever hardware UART port that is desired. This library also includes tools for data error-checking to safely process DMX and RDM commands as well as DMX packet metadata extraction to assist with troubleshooting errors.
 
 ## Contents
 
-- [Library Installation](#library-installation)
-  - [Arduino](#arduino)
-  - [ESP-IDF](#esp-idf)
-  - [PlatformIO](#platformio)
-- [Quick-Start Guide](#quick-start-guide)
-- [What is DMX?](#what-is-dmx)
-  - [What is RDM?](#what-is-rdm)
-- [DMX Basics](#dmx-basics)
-  - [Addresses and the Start Code](#addresses-and-the-start-code)
-  - [Footprints](#footprints)
-  - [Universes](#universes)
-- [RDM Basics](#rdm-basics)
-  - [Unique IDs](#unique-ids)
-  - [Sub-devices](#sub-devices)
-  - [Parameters](#parameters)
-  - [Discovery](#discovery)
-  - [Responses](#responses)
-- [Configuring the DMX Port](#configuring-the-dmx-port)
-  - [Installing the Driver](#installing-the-driver)
-  - [Setting Communication Pins](#setting-communication-pins)
-  - [Timing Configuration](#timing-configuration)
-- [Reading and Writing DMX](#reading-and-writing-dmx)
-  - [Reading DMX](#reading-dmx)
-  - [DMX Sniffer](#dmx-sniffer)
-  - [Writing DMX](#writing-dmx)
-  - [DMX Parameters](#dmx-parameters)
-- [Reading and Writing RDM](#reading-and-writing-rdm)
-  - [RDM Requests](#rdm-requests)
-  - [Discovering Devices](#discovering-devices)
-  - [RDM Responder](#rdm-responder)
-- [Error Handling](#error-handling)
-  - [Timing Macros](#timing-macros)
-  - [DMX Start Codes](#dmx-start-codes)
-- [Additional Considerations](#additional-considerations)
-  - [Using Flash or Disabling Cache](#using-flash-or-disabling-cache)
-  - [Wiring an RS-485 Circuit](#wiring-an-rs-485-circuit)
-  - [Hardware Specifications](#hardware-specifications)
-- [To Do](#to-do)
-- [Appendix](#appendix)
-  - [Command Classes](#command-classes)
-  - [NACK Reason Codes](#nack-reason-codes)
-  - [Parameter IDs](#parameter-ids)
-  - [Product Categories](#product-categories)
-  - [Response Types](#response-types)
+- [esp_dmx](#esp_dmx)
+  - [Contents](#contents)
+  - [Library Installation](#library-installation)
+    - [Arduino](#arduino)
+    - [ESP-IDF](#esp-idf)
+    - [PlatformIO](#platformio)
+  - [Quick-Start Guide](#quick-start-guide)
+  - [What is DMX?](#what-is-dmx)
+    - [What is RDM?](#what-is-rdm)
+  - [DMX Basics](#dmx-basics)
+    - [Addresses and the Start Code](#addresses-and-the-start-code)
+    - [Footprints](#footprints)
+    - [Universes](#universes)
+  - [RDM Basics](#rdm-basics)
+    - [Unique IDs](#unique-ids)
+    - [Sub-devices](#sub-devices)
+    - [Parameters](#parameters)
+    - [Discovery](#discovery)
+    - [Responses](#responses)
+  - [Configuring the DMX Port](#configuring-the-dmx-port)
+    - [Installing the Driver](#installing-the-driver)
+    - [Setting Communication Pins](#setting-communication-pins)
+    - [Timing Configuration](#timing-configuration)
+  - [Reading and Writing DMX](#reading-and-writing-dmx)
+    - [Reading DMX](#reading-dmx)
+    - [DMX Sniffer](#dmx-sniffer)
+    - [Writing DMX](#writing-dmx)
+    - [DMX Parameters](#dmx-parameters)
+  - [Reading and Writing RDM](#reading-and-writing-rdm)
+    - [RDM Requests](#rdm-requests)
+    - [Discovering Devices](#discovering-devices)
+    - [RDM Responder](#rdm-responder)
+  - [Error Handling](#error-handling)
+    - [Timing Macros](#timing-macros)
+    - [DMX Start Codes](#dmx-start-codes)
+  - [Additional Considerations](#additional-considerations)
+    - [Using Flash or Disabling Cache](#using-flash-or-disabling-cache)
+    - [Wiring an RS-485 Circuit](#wiring-an-rs-485-circuit)
+    - [Hardware Specifications](#hardware-specifications)
+  - [To Do](#to-do)
+  - [Appendix](#appendix)
+    - [Command Classes](#command-classes)
+    - [NACK Reason Codes](#nack-reason-codes)
+    - [Parameter IDs](#parameter-ids)
+    - [Product Categories](#product-categories)
+    - [Response Types](#response-types)
 
 ## Library Installation
 
@@ -102,7 +106,7 @@ while (true) {
   // Write to the packet and send it.
   dmx_write(dmx_num, data, DMX_PACKET_SIZE);
   dmx_send(dmx_num);
-  
+
   // Do work here...
 
   // Block until the packet is finished sending.
@@ -270,8 +274,8 @@ The `dmx_config_t` sets permanent configuration values within the DMX driver. Th
 - `sub_device_parameter_count` The number of parameters that the sub-devices support. This is the number of parameters that may be registered per sub-device. The default value is `0`.
 - `model_id` This field identifies the device model ID of the root device. This is an arbitrary value set by the user to uniquely identify different models of RDM devices made by a single manufacturer from one another. The default value is `0`.
 - `product_category` Devices shall report a product category based on the product's primary function. The product categories are enumerated in `product_category_t`. The default value is `RDM_PRODUCT_CATEGORY_FIXTURE`.
-- `software_version_id` This field indicates the software version ID for the device. The software version ID is a 32-bit value determined by the manufacturer. The default value is based on the current version of *esp_dmx*.
-- `software_version_label` This RDM parameter is used to get a descriptive ASCII text label for the device's operating software version. The descriptive text returned by this parameter is intended for display to the user. The default value is a string based on the current version of *esp_dmx*.
+- `software_version_id` This field indicates the software version ID for the device. The software version ID is a 32-bit value determined by the manufacturer. The default value is based on the current version of _esp_dmx_.
+- `software_version_label` This RDM parameter is used to get a descriptive ASCII text label for the device's operating software version. The descriptive text returned by this parameter is intended for display to the user. The default value is a string based on the current version of _esp_dmx_.
 - `queue_size_max` The maximum size of the RDM queue. Setting this value to 0 disables the RDM queue. The default value is `32`.
 
 The `dmx_personality_t` type is a struct which contains two fields: `footprint` and `description`. The `footprint` field is the DMX footprint of the personality. This is the number of DMX slots which this footprint uses. The `description` field is a string which describes the purpose of the DMX personality. This field is used for RDM responses and may be up to 33 characters long including a null-terminator.
@@ -514,14 +518,14 @@ if (current_personality < personality_count) {
     start at 1, not 0! */
 
   // Get and print the new personality description and footprint.
-  const char *desc = dmx_get_personality_description(DMX_NUM_1, 
+  const char *desc = dmx_get_personality_description(DMX_NUM_1,
                                                      current_personality);
   uint16_t footprint = dmx_get_footprint(DMX_NUM_1, current_personality);
   printf("Setting the current personality to %i: '%s'\n", current_personality,
          desc);
   printf("Personality %i has a footprint of %i\n", current_personality,
          footprint);
-  
+
   dmx_set_current_personality(DMX_NUM_1, current_personality);
 }
 ```
@@ -533,12 +537,12 @@ Using only the functions listed above it is possible to send and receive RDM pac
 ```c
 // This is a hard-coded discovery response packet.
 const uint8_t discovery_response[] = {
-  0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xaf, 0x55, 0xea, 0xf5, 0xba, 
-  0x57, 0xbb, 0xdd, 0xbf, 0x55, 0xba, 0xdf, 0xaa, 0x5d, 0xbb, 0x7d 
+  0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xaf, 0x55, 0xea, 0xf5, 0xba,
+  0x57, 0xbb, 0xdd, 0xbf, 0x55, 0xba, 0xdf, 0xaa, 0x5d, 0xbb, 0x7d
 };
 dmx_write(DMX_NUM_1, discovery_response, sizeof(discovery_response));
 
-// This function will not send a DMX break or mark-after-break 
+// This function will not send a DMX break or mark-after-break
 dmx_send(DMX_NUM_1);
 ```
 
@@ -582,7 +586,7 @@ if (rdm_send_get_device_info(DMX_NUM_1, &dest_uid, sub_device, &device_info,
 }
 
 const uint16_t new_address = 123;  // The new RDM_PID_DMX_START_ADDRESS to send.
-if (rdm_send_set_dmx_start_address(DMX_NUM_1, &dest_uid, sub_device, 
+if (rdm_send_set_dmx_start_address(DMX_NUM_1, &dest_uid, sub_device,
                                    new_address, &ack)) {
   printf("Device " UIDSTR " has been set to DMX address %i.\n",
           UID2STR(dest_uid), new_address);
@@ -715,9 +719,9 @@ void custom_callback(dmx_port_t dmx_num, rdm_header_t *request,
 The arguments in the callback function reflect the RDM header received in the RDM request and the RDM header sent in the response. The DMX port number and a user context is also provided.
 
 ```c
-void *context = NULL;  // Context not needed for the above callback 
+void *context = NULL;  // Context not needed for the above callback
 const char *new_software_label = "My Custom Software";
-if (rdm_register_software_version_label(DMX_NUM_1, new_software_label, 
+if (rdm_register_software_version_label(DMX_NUM_1, new_software_label,
                                         custom_callback, context)) {
   printf("A new software version label has been registered!\n");
 }
@@ -785,7 +789,7 @@ while (true) {
         // Data is OK. Now read the packet into the buffer.
         dmx_read(DMX_NUM_1, data, packet.size);
         break;
-      
+
       case DMX_ERR_TIMEOUT:
         printf("The driver timed out waiting for the packet.\n");
         /* If the provided timeout was less than DMX_TIMEOUT_TICK, it may be
@@ -795,7 +799,7 @@ while (true) {
 
       case DMX_ERR_IMPROPER_SLOT:
         printf("Received malformed byte at slot %i.\n", packet.size);
-        /* A slot in the packet is malformed. Data can be recovered up until 
+        /* A slot in the packet is malformed. Data can be recovered up until
           packet.size. */
         break;
 
@@ -804,7 +808,7 @@ while (true) {
         /* The ESP32 UART overflowed. This could occur if the DMX ISR is being
           constantly preempted. */
         break;
-      
+
       case DMX_ERR_NOT_ENOUGH_SLOTS:
         printf("DMX packet size is too small. %i expected, %i received.\n",
                num_slots, packet.size);
@@ -939,60 +943,60 @@ The NACK reason defines the reason that the responder is unable to comply with t
 
 The table below lists the Parameter IDs specified by the RDM standard. Parameters which support GET or SET are indicated accordingly. Required parameters are automatically registered by the DMX driver if there is enough parameter space on the DMX driver. PIDs which are currently supported by this library are indicated in the "supported" column by the earliest version of this library which supports the PID.
 
-Parameter                                   | GET | SET |Supported|Notes|
-:-------------------------------------------|:---:|:---:|:-------:|:----|
-`RDM_PID_DISC_UNIQUE_BRANCH`                | | |v3.1.0|Must be broadcast to all devices. Must be sent to the root sub-device.|
-`RDM_PID_DISC_MUTE`                         | | |v3.1.0|Must be sent to the root sub-device.|
-`RDM_PID_DISC_UN_MUTE`                      | | |v3.1.0|Must be sent to the root sub-device.|
-`RDM_PID_PROXIED_DEVICES`                   |✔️| |      |Must be sent to the root sub-device.|
-`RDM_PID_PROXIED_DEVICE_COUNT`              |✔️| |      |Must be sent to the root sub-device.|
-`RDM_PID_COMMS_STATUS`                      |✔️|✔️|      |Must be sent to the root sub-device.|
-`RDM_PID_QUEUED_MESSAGE`                    |✔️| |v4.0.0|Must be sent to the root sub-device.|
-`RDM_PID_STATUS_MESSAGE`                    |✔️| |      |Must be sent to the root sub-device.|
-`RDM_PID_STATUS_ID_DESCRIPTION`             |✔️| |      |Must be sent to the root sub-device.|
-`RDM_PID_CLEAR_STATUS_ID`                   | |✔️|      | |
-`RDM_PID_SUB_DEVICE_STATUS_REPORT_THRESHOLD`|✔️|✔️|      |Must **not** be sent to the root sub-device.|
-`RDM_PID_SUPPORTED_PARAMETERS`              |✔️| |v4.0.0|Support required only if supporting parameters beyond the minimum required set.|
-`RDM_PID_PARAMETER_DESCRIPTION`             |✔️| |v4.0.0|Must be sent to the root sub-device. Support required for manufacturer-specific PIDs exposed in `RDM_PID_SUPPORTED_PARAMETERS`.|
-`RDM_PID_DEVICE_INFO`                       |✔️| |v3.1.0| |
-`RDM_PID_PRODUCT_DETAIL_ID_LIST`            |✔️| |      | |
-`RDM_PID_DEVICE_MODEL_DESCRIPTION`          |✔️| |v4.1.0| |
-`RDM_PID_MANUFACTURER_LABEL`                |✔️| |v4.0.0| |
-`RDM_PID_DEVICE_LABEL`                      |✔️|✔️|v3.1.0| |
-`RDM_PID_FACTORY_DEFAULTS`                  |✔️|✔️|      | |
-`RDM_PID_LANGUAGE_CAPABILITIES`             |✔️| |      | |
-`RDM_PID_LANGUAGE`                          |✔️|✔️|v4.1.0| |
-`RDM_PID_SOFTWARE_VERSION_LABEL`            |✔️| |v3.1.0| |
-`RDM_PID_BOOT_SOFTWARE_VERSION_ID`          |✔️| |      | |
-`RDM_PID_BOOT_SOFTWARE_VERSION_LABEL`       |✔️| |      | |
-`RDM_PID_DMX_PERSONALITY`                   |✔️|✔️|      | |
-`RDM_PID_DMX_PERSONALITY_DESCRIPTION`       |✔️| |      | |
-`RDM_PID_DMX_START_ADDRESS`                 |✔️|✔️|v3.1.0|Support required if device uses a DMX slot.|
-`RDM_PID_SLOT_INFO`                         |✔️| |      | |
-`RDM_PID_SLOT_DESCRIPTION`                  |✔️| |      | |
-`RDM_PID_DEFAULT_SLOT_VALUE`                |✔️| |      | |
-`RDM_PID_SENSOR_DEFINITION`                 |✔️| |v4.1.0| |
-`RDM_PID_SENSOR_VALUE`                      |✔️|✔️|v4.0.0| |
-`RDM_PID_RECORD_SENSORS`                    | |✔️|v4.0.0| |
-`RDM_PID_DEVICE_HOURS`                      |✔️|✔️|v4.1.0|Some devices may not support RDM SET requests. Support for SET may be disabled using the ESP-IDF Kconfig.|
-`RDM_PID_LAMP_HOURS`                        |✔️|✔️|v4.1.0| |
-`RDM_PID_LAMP_STRIKES`                      |✔️|✔️|      | |
-`RDM_PID_LAMP_STATE`                        |✔️|✔️|      | |
-`RDM_PID_LAMP_ON_MODE`                      |✔️|✔️|      | |
-`RDM_PID_DEVICE_POWER_CYCLES`               |✔️|✔️|      | |
-`RDM_PID_DISPLAY_INVERT`                    |✔️|✔️|      | |
-`RDM_PID_DISPLAY_LEVEL`                     |✔️|✔️|      | |
-`RDM_PID_PAN_INVERT`                        |✔️|✔️|      | |
-`RDM_PID_TILT_INVERT`                       |✔️|✔️|      | |
-`RDM_PID_PAN_TILT_SWAP`                     |✔️|✔️|      | |
-`RDM_PID_REAL_TIME_CLOCK`                   |✔️|✔️|      | |
-`RDM_PID_IDENTIFY_DEVICE`                   |✔️|✔️|v3.1.0| |
-`RDM_PID_RESET_DEVICE`                      | |✔️|v4.1.0| |
-`RDM_PID_POWER_STATE`                       |✔️|✔️|      | |
-`RDM_PID_PERFORM_SELFTEST`                  |✔️|✔️|      | |
-`RDM_PID_SELF_TEST_DESCRIPTION`             |✔️| |      | |
-`RDM_PID_CAPTURE_PRESET`                    | |✔️|      | |
-`RDM_PID_PRESET_PLAYBACK`                   |✔️|✔️|      | |
+| Parameter                                    | GET | SET | Supported | Notes                                                                                                                           |
+| :------------------------------------------- | :-: | :-: | :-------: | :------------------------------------------------------------------------------------------------------------------------------ |
+| `RDM_PID_DISC_UNIQUE_BRANCH`                 |     |     |  v3.1.0   | Must be broadcast to all devices. Must be sent to the root sub-device.                                                          |
+| `RDM_PID_DISC_MUTE`                          |     |     |  v3.1.0   | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_DISC_UN_MUTE`                       |     |     |  v3.1.0   | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_PROXIED_DEVICES`                    | ✔️  |     |           | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_PROXIED_DEVICE_COUNT`               | ✔️  |     |           | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_COMMS_STATUS`                       | ✔️  | ✔️  |           | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_QUEUED_MESSAGE`                     | ✔️  |     |  v4.0.0   | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_STATUS_MESSAGE`                     | ✔️  |     |           | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_STATUS_ID_DESCRIPTION`              | ✔️  |     |           | Must be sent to the root sub-device.                                                                                            |
+| `RDM_PID_CLEAR_STATUS_ID`                    |     | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_SUB_DEVICE_STATUS_REPORT_THRESHOLD` | ✔️  | ✔️  |           | Must **not** be sent to the root sub-device.                                                                                    |
+| `RDM_PID_SUPPORTED_PARAMETERS`               | ✔️  |     |  v4.0.0   | Support required only if supporting parameters beyond the minimum required set.                                                 |
+| `RDM_PID_PARAMETER_DESCRIPTION`              | ✔️  |     |  v4.0.0   | Must be sent to the root sub-device. Support required for manufacturer-specific PIDs exposed in `RDM_PID_SUPPORTED_PARAMETERS`. |
+| `RDM_PID_DEVICE_INFO`                        | ✔️  |     |  v3.1.0   |                                                                                                                                 |
+| `RDM_PID_PRODUCT_DETAIL_ID_LIST`             | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_DEVICE_MODEL_DESCRIPTION`           | ✔️  |     |  v4.1.0   |                                                                                                                                 |
+| `RDM_PID_MANUFACTURER_LABEL`                 | ✔️  |     |  v4.0.0   |                                                                                                                                 |
+| `RDM_PID_DEVICE_LABEL`                       | ✔️  | ✔️  |  v3.1.0   |                                                                                                                                 |
+| `RDM_PID_FACTORY_DEFAULTS`                   | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_LANGUAGE_CAPABILITIES`              | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_LANGUAGE`                           | ✔️  | ✔️  |  v4.1.0   |                                                                                                                                 |
+| `RDM_PID_SOFTWARE_VERSION_LABEL`             | ✔️  |     |  v3.1.0   |                                                                                                                                 |
+| `RDM_PID_BOOT_SOFTWARE_VERSION_ID`           | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_BOOT_SOFTWARE_VERSION_LABEL`        | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_DMX_PERSONALITY`                    | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_DMX_PERSONALITY_DESCRIPTION`        | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_DMX_START_ADDRESS`                  | ✔️  | ✔️  |  v3.1.0   | Support required if device uses a DMX slot.                                                                                     |
+| `RDM_PID_SLOT_INFO`                          | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_SLOT_DESCRIPTION`                   | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_DEFAULT_SLOT_VALUE`                 | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_SENSOR_DEFINITION`                  | ✔️  |     |  v4.1.0   |                                                                                                                                 |
+| `RDM_PID_SENSOR_VALUE`                       | ✔️  | ✔️  |  v4.0.0   |                                                                                                                                 |
+| `RDM_PID_RECORD_SENSORS`                     |     | ✔️  |  v4.0.0   |                                                                                                                                 |
+| `RDM_PID_DEVICE_HOURS`                       | ✔️  | ✔️  |  v4.1.0   | Some devices may not support RDM SET requests. Support for SET may be disabled using the ESP-IDF Kconfig.                       |
+| `RDM_PID_LAMP_HOURS`                         | ✔️  | ✔️  |  v4.1.0   |                                                                                                                                 |
+| `RDM_PID_LAMP_STRIKES`                       | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_LAMP_STATE`                         | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_LAMP_ON_MODE`                       | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_DEVICE_POWER_CYCLES`                | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_DISPLAY_INVERT`                     | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_DISPLAY_LEVEL`                      | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_PAN_INVERT`                         | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_TILT_INVERT`                        | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_PAN_TILT_SWAP`                      | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_REAL_TIME_CLOCK`                    | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_IDENTIFY_DEVICE`                    | ✔️  | ✔️  |  v3.1.0   |                                                                                                                                 |
+| `RDM_PID_RESET_DEVICE`                       |     | ✔️  |  v4.1.0   |                                                                                                                                 |
+| `RDM_PID_POWER_STATE`                        | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_PERFORM_SELFTEST`                   | ✔️  | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_SELF_TEST_DESCRIPTION`              | ✔️  |     |           |                                                                                                                                 |
+| `RDM_PID_CAPTURE_PRESET`                     |     | ✔️  |           |                                                                                                                                 |
+| `RDM_PID_PRESET_PLAYBACK`                    | ✔️  | ✔️  |           |                                                                                                                                 |
 
 ### Product Categories
 
