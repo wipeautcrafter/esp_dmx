@@ -57,6 +57,15 @@ static void DMX_ISR_ATTR dmx_uart_isr(void *arg) {
 
     // DMX Receive ####################################################
     if (intr_flags & DMX_INTR_RX_ALL) {
+      // While transmitting, RX activity is irrelevant for this driver and can
+      // perturb shared state (size/head/progress) on noisy or echoed lines.
+      // Drop RX data until TX is complete.
+      if (driver->dmx.status == DMX_STATUS_SENDING) {
+        dmx_uart_rxfifo_reset(dmx_num);
+        dmx_uart_clear_interrupt(dmx_num, DMX_INTR_RX_ALL);
+        continue;
+      }
+
       // Read data into the DMX buffer if there is enough space
       int dmx_head;
       taskENTER_CRITICAL_ISR(DMX_SPINLOCK(dmx_num));
@@ -266,6 +275,13 @@ static void DMX_ISR_ATTR dmx_uart_isr(void *arg) {
     else if (intr_flags & DMX_INTR_TX_DATA) {
       // Write data to the UART and clear the interrupt
       int write_len = driver->dmx.size - driver->dmx.head;
+      if (write_len <= 0) {
+        // Defensive guard: if head/size drift out of sync, never pass a
+        // negative size into uart_ll_write_txfifo() (would become a huge loop).
+        dmx_uart_disable_interrupt(dmx_num, DMX_INTR_TX_DATA);
+        dmx_uart_clear_interrupt(dmx_num, DMX_INTR_TX_DATA);
+        continue;
+      }
       dmx_uart_write_txfifo(dmx_num, &driver->dmx.data[driver->dmx.head],
                             &write_len);
       driver->dmx.head += write_len;
@@ -498,6 +514,10 @@ uint32_t DMX_ISR_ATTR dmx_uart_get_txfifo_len(dmx_port_t dmx_num) {
 
 void DMX_ISR_ATTR dmx_uart_write_txfifo(dmx_port_t dmx_num, const void *buf,
                                         int *size) {
+  if (*size <= 0) {
+    *size = 0;
+    return;
+  }
   struct dmx_uart_t *uart = &dmx_uart_context[dmx_num];
   const int txfifo_len = uart_ll_get_txfifo_len(uart->dev);
   if (*size > txfifo_len) *size = txfifo_len;
